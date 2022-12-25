@@ -1,13 +1,20 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.animation {
+    width: 4px;
+    height: 9px;
+    animation: startCircleAnimation 0.3s forwards;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* h-[9px] w-[4px] */
+@keyframes startCircleAnimation {
+    0% {
+        transform: scale(0) rotate(45deg);
+    }
+    100% {
+        transform: scale(1) rotate(45deg);
+    }
+
 }
