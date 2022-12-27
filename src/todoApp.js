@@ -76,15 +76,22 @@ const ToDoApp = (props) => {
 
     /* Filter Tody on search input change */
     const searchFilter = (value)=> {
-        const fixedArr = allTodoList
-        const newTodos = currentTodos.filter(item => {
+        const fixedArr = currentTodos
+        const newTodos = fixedArr.filter(item => {
             if(item.title.toLowerCase().includes(value.toLowerCase()) || item.text.toLowerCase().includes(value.toLowerCase())) {
                 return true
             }else {
                 return false
             }
         })
-        setTodos(newTodos)
+        if(value.length === 0) {
+            setCurrentTodos(allTodoList)
+            setTimeout(()=> {
+                document.querySelector(`[data-filter="${filter}"]`).click()
+            }, 1)
+        }else {
+            setCurrentTodos(newTodos)
+        }
     }
 
     /* Edit & Delete Todo Task on button click*/
@@ -167,10 +174,7 @@ const ToDoApp = (props) => {
                 createdTime: createdTime,
             }
 
-            todoList.push(newTask)
-            allTodoList.push(newTask)
-            // currentTodos.push(newTask)
-            // fixedTodos.push(newTask)
+            fixedTodos.push(newTask)
 
             setCreatePopup(false)
             setTimeout(()=> {
@@ -200,6 +204,7 @@ const ToDoApp = (props) => {
                 <Filter todos={fixedTodos} filterTodo={filterTodo}/>
 
                 {/* ToDo List */}
+                {/* todos={currentTodos} */}
                 <TodoItems filter={filter} todos={currentTodos} toggleIsDone={toggleIsDone} editTask={editTask} deleteTask={deleteTask}/>
             
                 {/* Edit Popup */}
