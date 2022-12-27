@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 import Header from './components/Header'
-// import Search from './components/Search'
+import Search from './components/Search'
 import Filter from './components/Filter'
 import TodoItems from './components/TodoList'
 import EditPopup from "./components/EditPopup"
@@ -23,6 +23,7 @@ const ToDoApp = (props) => {
     const [todoList, setTodos] = useState(todoArr)
     const [allTodoList, setAllTodoList] = useState(todoArr)
     const [currentTodos, setCurrentTodos] = useState(todoArr)
+    const [currentTodos2, setCurrentTodos2] = useState(todoArr);
     const [fixedTodos, setFixedTodos] = useState(todoArr)
 
     const [filter, setFilter] = useState('all') 
@@ -59,6 +60,7 @@ const ToDoApp = (props) => {
             })
             setTodos(newTodos)
             setCurrentTodos(newTodos)
+            setCurrentTodos2(newTodos)
         }else if(opt === 'uncompleted') {
             const newTodos = fixedArr.filter((item, index)=> {
                 if(item.isDone) {
@@ -67,11 +69,26 @@ const ToDoApp = (props) => {
             })
             setTodos(newTodos)
             setCurrentTodos(newTodos)
+            setCurrentTodos2(newTodos)
         }else {
             setTodos(allTodoList)
             setCurrentTodos(allTodoList)
+            setCurrentTodos2(allTodoList)
         }
 
+    }
+
+    const searchFilter = (value)=> {
+        // console.log(value)
+        const fixedCurrentTodos = currentTodos2
+        const newArr = fixedCurrentTodos.filter(item => {
+            if(item.title.toLowerCase().includes(value.toLowerCase()) || item.text.toLowerCase().includes(value.toLowerCase())) {
+                return true
+            }else {
+                return false
+            }
+        })
+        setCurrentTodos(newArr)
     }
 
     /* Edit & Delete Todo Task on button click*/
@@ -95,6 +112,7 @@ const ToDoApp = (props) => {
         setTodos(newTodos)
         setAllTodoList(newTodos)
         setCurrentTodos(newTodos)
+        setCurrentTodos2(newTodos)
         setFixedTodos(newTodos)
 
         setTimeout(()=> {
@@ -118,6 +136,7 @@ const ToDoApp = (props) => {
             setTodos(newTodos)
             setAllTodoList(newTodos)
             setCurrentTodos(newTodos)
+            setCurrentTodos2(newTodos)
             setFixedTodos(newTodos)
 
             setEditPopup([false, ''])
@@ -178,7 +197,7 @@ const ToDoApp = (props) => {
                <Header todoLength={fixedTodos.length} openCreatePopup={openCreatePopup}/>
 
                 {/* Search */}
-                {/* <Search placeholder="Search Tasks..." searchFilter={searchFilter}/> */}
+                <Search placeholder="Search Tasks..." searchFilter={searchFilter}/>
 
                 {/* Filter */}
                 <Filter todos={fixedTodos} filterTodo={filterTodo}/>
