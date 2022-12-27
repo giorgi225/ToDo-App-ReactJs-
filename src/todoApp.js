@@ -162,7 +162,7 @@ const ToDoApp = (props) => {
         }else {
             const randId = Date.now() * (Math.random() * 100)
             let date = new Date
-            let createdAt = date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear();
+            let createdAt = date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear();
             let minutes = date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes()
             let createdTime = date.getHours() + ":" + minutes
 
