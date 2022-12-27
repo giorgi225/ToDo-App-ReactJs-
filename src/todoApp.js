@@ -8,193 +8,209 @@ import EditPopup from "./components/EditPopup"
 import CreatePopup from './components/CreatePopup'
 
 const ToDoApp = (props) => {
-    const todoList = [
+
+    const todoArr = [
         {
             id:0,
             title: "Create ToDo App",
-            text: "create todo app in reactJs, must use state and props",
+            text: "create todo app in reactJs, use states & props",
             isDone:false,
-        },
-        {
-            id:1,
-            title: "Cinema",
-            text: "Going to the cinema with friends",
-            isDone:false,
-        },
-        {
-            id:2,
-            title: "JS Framework Course",
-            text: "Learn Javascript Framework VueJs",
-            isDone:true,
+            createdAt: "12/25/2022",
+            createdTime: "22:59",
         },
     ]
 
-    const [staticTodos, setStaticTodos] = useState(todoList) // for stati list only change when delete todo item from list
-    const [todos, setTodos] = useState(todoList)
-    const [searchTodos, setSearchTodos] = useState(todoList)
-    const [searchAllTodos, setSerchAllTodos] = useState(todoList)
-    const [allTodos, setAllTodos] = useState(todoList)
+    const [todoList, setTodos] = useState(todoArr)
+    const [allTodoList, setAllTodoList] = useState(todoArr)
+    const [currentTodos, setCurrentTodos] = useState(todoArr)
+    const [fixedTodos, setFixedTodos] = useState(todoArr)
 
-    const [editPopup, setEditPopup] = useState(false)
-    const [popupData, setPopupData] = useState(null)
+    const [filter, setFilter] = useState('all') 
 
-    const [createPopup, setcreatePopup] = useState(false)
+    const [editPopup, setEditPopup] = useState([false, ''])
+    const [createPopup, setCreatePopup] = useState(false)
 
-    const filterTodo = (e,filterVal)=> {
-        document.querySelectorAll('li').forEach(li => {
-            li.classList.remove('text-main')
-        })
-        // document.querySelector('input').value = ''
-        e.target.classList.remove('text-black')
-        e.target.classList.add('text-main')
-
-        if(filterVal === 'completed') {
-            const newAllTodo = allTodos
-            const newTodo = newAllTodo.filter(item => {
-                if(item.isDone) {
-                    return true
-                }else {
-                    return false
-                }
-            })
-            setTodos(newTodo)
-            setSearchTodos(newTodo)
-        }else if(filterVal === 'uncompleted') {
-           const newAllTodo = allTodos
-           const newTodo = newAllTodo.filter(item => {
-                if(!item.isDone) {
-                    return true
-                }else {
-                    return false
-                }
-            })
-            setTodos(newTodo)
-            setSearchTodos(newTodo)
-        }else {
-            setTodos(allTodos)
-            setSearchTodos(allTodos)
-        }
-    }
-
-    const filterSearch = (e)=> {
-        let value = e.target.value.toLowerCase()
-        const newAllTodo = searchTodos
-        // const 
-        const filterTodo = newAllTodo.filter(item => {
-                if(item.title.toLowerCase().includes(value) || item.text.toLowerCase().includes(value)) {
-                    return true
-                }else {
-                    return false
-                }
-            })
-            if(value.length !== 0) {
-                setTodos(filterTodo)
-                setAllTodos(filterTodo)
-            }else {
-                if(searchTodos.length !== 0) {
-                    setTodos(searchTodos)
-                }else {
-                    setTodos(staticTodos)
-                    setTimeout(()=> {
-                        document.getElementById('all').click()
-                    },15)
-                }
-                setAllTodos(searchAllTodos)
-            }
-    }
-
+    /* Toggle isDone property on todo item click */
     const toggleIsDone = (itemId)=> {
-        const newAllTodos = allTodos
-        const newAllTodo = newAllTodos.map(item => {
+        const updateTodo = todoList.map(item => {
             if(item.id === itemId) {
                 item.isDone = !item.isDone
             }
             return item
         })
+        setTodos(updateTodo)
+    }
 
-        setAllTodos(newAllTodo)
-        setSerchAllTodos(newAllTodo)
+    /* Filter Todo on clicking filter items */
+    const filterTodo = (e,opt)=> {
+        const fixedArr = allTodoList
+        // document.querySelector('input').value = ''
+        for(let i = 0; i<= e.target.parentElement.children.length - 1; i++) {
+            e.target.parentElement.children[i].classList.remove('text-main')
+        }
+        e.target.classList.remove('text-black')
+        e.target.classList.add('text-main')
+        setFilter(opt)
+        if(opt === 'completed') {
+            const newTodos = fixedArr.filter((item, index)=> {
+                if(!item.isDone) {
+                    return false
+                }return true
+            })
+            setTodos(newTodos)
+            setCurrentTodos(newTodos)
+        }else if(opt === 'uncompleted') {
+            const newTodos = fixedArr.filter((item, index)=> {
+                if(item.isDone) {
+                    return false
+                }return true
+            })
+            setTodos(newTodos)
+            setCurrentTodos(newTodos)
+        }else {
+            setTodos(allTodoList)
+            setCurrentTodos(allTodoList)
+        }
 
     }
 
-    const editTodo = (itemId)=> {
-        setEditPopup(true)
-        setPopupData(todos[itemId])
-    }
-
-    const deleteTodo = (itemId)=> {
-        const newTodo = todos.filter(item => {
-            if(item.id === itemId) {
-                return false
-            }else {
+    /* Filter Tody on search input change */
+    const searchFilter = (value)=> {
+        const fixedArr = allTodoList
+        const newTodos = currentTodos.filter(item => {
+            if(item.title.toLowerCase().includes(value.toLowerCase()) || item.text.toLowerCase().includes(value.toLowerCase())) {
                 return true
+            }else {
+                return false
             }
         })
-        setTodos(newTodo)
-        setAllTodos(newTodo)
-        setSearchTodos(newTodo)
-        setSerchAllTodos(newTodo)
-        setStaticTodos(newTodo)
+        setTodos(newTodos)
     }
 
-    const submitForm = (e, title, text, itemId)=> {
+    /* Edit & Delete Todo Task on button click*/
+    const editTask = (itemId)=> {
+        const currentEditTask = todoList.filter(item => {
+            if(item.id === itemId) {
+                return true
+            }
+            return false
+        })
+        setEditPopup([true, currentEditTask[0]])
+    }
+
+    const deleteTask = (itemId)=> {
+        const newTodos = fixedTodos.filter((item, index) => {
+            if(item.id === itemId) {
+                return false
+            }
+            return item
+        })
+        setTodos(newTodos)
+        setAllTodoList(newTodos)
+        setCurrentTodos(newTodos)
+        setFixedTodos(newTodos)
+
+        setTimeout(()=> {
+            document.querySelector(`[data-filter="${filter}"]`).click()
+        }, 15)
+
+    }
+
+    const handleEditSubmit = (e, itemId, title, text)=> {
         e.preventDefault();
-        if(title.length !== 0 || text.length !== 0) {
-            const newTodos = todos.map((item)=> {
-                if(item.id === itemId) 
-                {
+        if(title.length === 0 || text.length === 0) {
+            alert('please fill the field')
+        }else {
+            const newTodos = fixedTodos.map((item)=> {
+                if(item.id === itemId) {
                     item.title = title
                     item.text = text
                 }
                 return item
             })
             setTodos(newTodos)
-            setEditPopup(false)
-            setPopupData(null)
+            setAllTodoList(newTodos)
+            setCurrentTodos(newTodos)
+            setFixedTodos(newTodos)
+
+            setEditPopup([false, ''])
+            
+            setTimeout(()=> {
+                document.querySelector(`[data-filter="${filter}"]`).click()
+            }, 15)
+
         }
+
     }
 
-    const createTodo = ()=> {
-        setcreatePopup(true)
+    /* Add New Task on button click */
+    const openCreatePopup = ()=> {
+        setCreatePopup(true)
     }
-    const submitCreate = (e, title, text)=> {
+
+    const submitCreateTask = (e, title, text)=> {
         e.preventDefault()
-        
-        let randId = Date.now() + (Math.random() * 100)
-        const newTodo = {
-            id: randId,
-            title: title,
-            text:text,
-        }
+        if(title.length === 0 || text.length === 0) {
+            alert('please fill both field')
+        }else {
+            const randId = Date.now() * (Math.random() * 100)
+            let date = new Date
+            let createdAt = date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear();
+            let minutes = date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes()
+            let createdTime = date.getHours() + ":" + minutes
 
-        todos.push(newTodo)
-        // allTodos.push(newTodo)
-        // searchTodos.push(newTodo)
-        // searchAllTodos.push(newTodo)
-        // staticTodos.push(newTodo)
-        setcreatePopup(false)
+            const newTask = {
+                id: randId,
+                title: title,
+                text:text,
+                createdAt: createdAt,
+                createdTime: createdTime,
+            }
+
+            todoList.push(newTask)
+            allTodoList.push(newTask)
+            // currentTodos.push(newTask)
+            // fixedTodos.push(newTask)
+
+            setCreatePopup(false)
+            setTimeout(()=> {
+                document.querySelector(`[data-filter="${filter}"]`).click()
+            }, 15)
+        }
+    }
+
+    /* Close Edit, Create Popup */
+    const closeEditPopup = ()=> {
+        setEditPopup([false, ''])
+    }
+    const closeCreatePopup = ()=> {
+        setCreatePopup(false)
     }
 
     return (
         <div className="w-full h-screen bg-linear flex items-center justify-center">
             <div className="relative w-full max-w-[600px] min-h-[450px] bg-white rounded overflow-hidden">
                 {/* Header */}
-                <Header total={staticTodos.length} createTodo={createTodo}/>
+               <Header todoLength={fixedTodos.length} openCreatePopup={openCreatePopup}/>
 
                 {/* Search */}
-                <Search filterSearch={filterSearch}/>
+                <Search placeholder="Search Tasks..." searchFilter={searchFilter}/>
 
                 {/* Filter */}
-                <Filter filterTodos={filterTodo} todoList={allTodos}/>
+                <Filter todos={fixedTodos} filterTodo={filterTodo}/>
 
                 {/* ToDo List */}
-                <TodoItems toggleIsDone={toggleIsDone} editTodo={editTodo} deleteTodo={deleteTodo} todoList={todos}/>
-
+                <TodoItems filter={filter} todos={currentTodos} toggleIsDone={toggleIsDone} editTask={editTask} deleteTask={deleteTask}/>
+            
                 {/* Edit Popup */}
-                {editPopup ? <EditPopup itemData={popupData} submitForm={submitForm} /> : ""}
-           
-                {/* Create Popup */}
-                {createPopup ? <CreatePopup submitCreate={submitCreate}/> : ""}
+                {
+                editPopup[0] ? <EditPopup taskData={editPopup[1]} handleEditSubmit={handleEditSubmit} closeEditPopup={closeEditPopup}/> : ""    
+                }
+
+                {/* Create Task popup */}
+                {
+                createPopup ? <CreatePopup submitCreateTask={submitCreateTask} closeCreatePopup={closeCreatePopup}/> : ""
+                }
             </div>
         </div>
     )
