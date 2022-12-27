@@ -1,7 +1,7 @@
 import { useState } from "react"
 
 import Header from './components/Header'
-import Search from './components/Search'
+// import Search from './components/Search'
 import Filter from './components/Filter'
 import TodoItems from './components/TodoList'
 import EditPopup from "./components/EditPopup"
@@ -72,26 +72,6 @@ const ToDoApp = (props) => {
             setCurrentTodos(allTodoList)
         }
 
-    }
-
-    /* Filter Tody on search input change */
-    const searchFilter = (value)=> {
-        const fixedArr = currentTodos
-        const newTodos = fixedArr.filter(item => {
-            if(item.title.toLowerCase().includes(value.toLowerCase()) || item.text.toLowerCase().includes(value.toLowerCase())) {
-                return true
-            }else {
-                return false
-            }
-        })
-        if(value.length === 0) {
-            setCurrentTodos(allTodoList)
-        }else {
-            setCurrentTodos(newTodos)
-        }
-        setTimeout(()=> {
-            document.querySelector(`[data-filter="${filter}"]`).click()
-        }, 10)
     }
 
     /* Edit & Delete Todo Task on button click*/
@@ -198,7 +178,7 @@ const ToDoApp = (props) => {
                <Header todoLength={fixedTodos.length} openCreatePopup={openCreatePopup}/>
 
                 {/* Search */}
-                <Search placeholder="Search Tasks..." searchFilter={searchFilter}/>
+                {/* <Search placeholder="Search Tasks..." searchFilter={searchFilter}/> */}
 
                 {/* Filter */}
                 <Filter todos={fixedTodos} filterTodo={filterTodo}/>
