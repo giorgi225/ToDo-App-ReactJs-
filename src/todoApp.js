@@ -86,12 +86,12 @@ const ToDoApp = (props) => {
         })
         if(value.length === 0) {
             setCurrentTodos(allTodoList)
-            setTimeout(()=> {
-                document.querySelector(`[data-filter="${filter}"]`).click()
-            }, 1)
         }else {
             setCurrentTodos(newTodos)
         }
+        setTimeout(()=> {
+            document.querySelector(`[data-filter="${filter}"]`).click()
+        }, 10)
     }
 
     /* Edit & Delete Todo Task on button click*/
